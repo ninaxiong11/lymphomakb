@@ -22,7 +22,7 @@ def get_mut_info(change, type):
         alt = match[3]  
     return pos, ref, alt
 
-def add_snv(batch, name, gene, build, genomic_pos, snv_count):
+def add_snv(batch, name, gene, build, chr, genomic_pos):
     match = re.match("(.+)\((.+)\)\:(.+).\((.+)\)", name)
     if not match:
         return
@@ -42,13 +42,13 @@ def add_snv(batch, name, gene, build, genomic_pos, snv_count):
         return
     else:
         protein_pos, ref_aa, alt_aa = get_mut_info(protein_change, "protein")
-    variant_name = "snv" + str(snv_count)
     batch[clean_string(name)] = batch.snvs.create(
-        name = gene + coding_change,
         source = "clinvar",
+        name = gene + coding_change,
         build = build,
         gene = gene,
         transcript = transcript,
+        chromosome = int(chr),
         genomic_pos = int(genomic_pos),
         coding_pos = int(coding_pos),
         ref_nt = ref_nt,
@@ -59,7 +59,7 @@ def add_snv(batch, name, gene, build, genomic_pos, snv_count):
     )
     return True
 
-def add_copy_gain(batch, name, gene, build, copy_gain_count):
+def add_copy_gain(batch, name, gene, build, chr):
     match = re.match("(.+)\s(.+)\((.+)\)x(\d+)", name)
     if not match:
         return
@@ -67,22 +67,24 @@ def add_copy_gain(batch, name, gene, build, copy_gain_count):
     cytogenetic_loc = match[1]
     genomic_loc = match[2]
     copies = match[3]
-    variant_name = "copygain" + str(copy_gain_count)
     batch[clean_string(name)] = batch.copygains.create(
         source = "clinvar",
         build = build,
         gene = gene,
         copies = copies,
+        chromosome = int(chr),
         genomic_loc = genomic_loc,
         cytogenetic_loc = cytogenetic_loc
     )
     return True
 
-def add_statement(batch, variant_name, clinsig, phenotypes, statement_type):
+def add_statement(batch, variant_name, clinsig, phenotypes, statement_type, disease_dict):
     statement_count = 0
     for pheno in phenotypes:
+        if pheno not in disease_dict.keys():
+            disease_dict[pheno] = "disease" + str(len(disease_dict))
         statement_name = clean_string(variant_name) + clean_string(pheno)
-        disease_name = clean_string(pheno)
+        disease_name = disease_dict[pheno] # clean_string(pheno)
         batch[statement_name] = batch.statements.create(
             source = "clinvar",
             significance = clinsig
@@ -94,7 +96,7 @@ def add_statement(batch, variant_name, clinsig, phenotypes, statement_type):
                 source = "clinvar",
                 name = pheno
             )
-        # batch[:] = batch[:statement_name](statement_type) > batch[:disease_name]
-        # batch[:] = batch[:statement_name](statement_type) > batch[:clean_string(variant_name)]
+        batch[:] = batch[:statement_name](statement_type) > batch[:disease_name]
+        batch[:] = batch[:statement_name](statement_type) > batch[:clean_string(variant_name)]
         statement_count += 1
-    return statement_count
+    return statement_count, disease_dict

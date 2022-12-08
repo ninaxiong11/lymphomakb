@@ -18,6 +18,7 @@ def initialize_graph_schema(graph):
         build = String()
         gene = String()
         transcript = String()
+        chromosome = Integer()
         genomic_pos = Integer()
         coding_pos = Integer()
         ref_nt = String()
@@ -32,6 +33,7 @@ def initialize_graph_schema(graph):
         build = String()
         gene = String()
         copies = Integer()
+        chromosome = Integer()
         genomic_loc = String()
         cytogenetic_loc = String()
 
@@ -46,6 +48,7 @@ def initialize_graph_schema(graph):
         element_plural = "diseases"
         name = String(nullable=False)
         source = String()
+        synonyms = String()
 
     class Drug(Node):
         element_type = "drug"

@@ -4,9 +4,10 @@ def add_clinvar_data(graph, Involves, num_variants=500):
     batch = graph.batch()
     disease_dict = {}
     statement_count = 0
-    variant_count = 0
-    snv_count = 0
-    copy_gain_count = 0
+    variant_count = {"single nucleotide variants": 0, 
+                    "copy number gains": 0, 
+                    "copy number losses": 0
+                    }
     infile = open("/Users/ninaxiong/projects/orientdb/clinvar/variant_summary.txt")
     for i in range(num_variants):
         line = infile.readline()
@@ -24,21 +25,26 @@ def add_clinvar_data(graph, Involves, num_variants=500):
         if type == "single nucleotide variant":
             if add_snv(batch, name, gene, build, chr, start):
                 count, disease_dict = add_statement(batch, name, clinical_significance, phenotypes, Involves, disease_dict)
+                variant_count["single nucleotide variants"] += 1
                 statement_count += count
-                variant_count += 1
-                snv_count += 1
         if type == "copy number gain":
             if geneid == "-1":
-                gene = ""
+                gene = "-"
             if add_copy_gain(batch, name, gene, build, chr):
                 count, disease_dict = add_statement(batch, name, clinical_significance, phenotypes, Involves, disease_dict)
+                variant_count["copy number gains"] += 1
                 statement_count += count
-                variant_count += 1
-                copy_gain_count += 1
+        if type == "copy number loss":
+            if geneid == "-1":
+                gene = "-"
+            if add_copy_loss(batch, name, gene, build, chr):
+                count, disease_dict = add_statement(batch, name, clinical_significance, phenotypes, Involves, disease_dict)
+                variant_count["copy number losses"] += 1
+                statement_count += count
     infile.close()
     batch.commit()
     print("\nFrom ClinVar:")
-    print("Added " + str(variant_count) + " variants")
-    print("   " + str(snv_count) + " single nucleotide variants")
-    print("   " + str(copy_gain_count) + " copy gains")
+    print("Added " + str(sum(variant_count.values())) + " variants")
+    for k,v in variant_count.items():
+        print("   " + str(v) + " " + k)
     print("Added " + str(statement_count) + " statements")

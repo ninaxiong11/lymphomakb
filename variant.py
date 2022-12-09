@@ -67,13 +67,44 @@ def add_copy_gain(batch, name, gene, build, chr):
     cytogenetic_loc = match[1]
     genomic_loc = match[2]
     copies = match[3]
+    match = re.match("(.+):(.+)-(.+)", genomic_loc)
+    if not match:
+        return
+    match = match.groups()
+    genomic_start = match.groups[1]
+    genomic_end = match.groups[2]
     batch[clean_string(name)] = batch.copygains.create(
         source = "clinvar",
         build = build,
         gene = gene,
         copies = copies,
         chromosome = int(chr),
-        genomic_loc = genomic_loc,
+        genomic_start = int(genomic_start),
+        genomic_end = int(genomic_end),
+        cytogenetic_loc = cytogenetic_loc
+    )
+    return True
+
+def add_copy_loss(batch, name, gene, build, chr):
+    match = re.match("(.+)\s(.+)\((.+)\)x(\d+)", name)
+    if not match:
+        return
+    match = match.groups()
+    cytogenetic_loc = match[1]
+    genomic_loc = match[2]
+    match = re.match("(.+):(.+)-(.+)", genomic_loc)
+    if not match:
+        return
+    match = match.groups()
+    genomic_start = match.groups[1]
+    genomic_end = match.groups[2]
+    batch[clean_string(name)] = batch.copygains.create(
+        source = "clinvar",
+        build = build,
+        gene = gene,
+        chromosome = int(chr),
+        genomic_start = int(genomic_start),
+        genomic_end = int(genomic_end),
         cytogenetic_loc = cytogenetic_loc
     )
     return True

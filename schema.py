@@ -34,7 +34,18 @@ def initialize_graph_schema(graph):
         gene = String()
         copies = Integer()
         chromosome = Integer()
-        genomic_loc = String()
+        genomic_start = Integer()
+        genomic_end = Integer()
+        cytogenetic_loc = String()
+
+    class CopyLoss(Variant):
+        element_type = "copyloss"
+        element_plural = "copylosses"
+        build = String()
+        gene = String()
+        chromosome = Integer()
+        genomic_start = Integer()
+        genomic_end = Integer()
         cytogenetic_loc = String()
 
     class Statement(Node):
@@ -73,4 +84,4 @@ def initialize_graph_schema(graph):
     graph.create_all(Node.registry)
     graph.create_all(Relationship.registry)
 
-    return Variant, SNV, CopyGain, Statement, Disease, Drug, Involves, SubclassOf
+    return Variant, SNV, CopyGain, CopyLoss, Statement, Disease, Drug, Involves, SubclassOf

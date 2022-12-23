@@ -6,7 +6,10 @@ def add_clinvar_data(graph, Involves, num_variants=500):
     statement_count = 0
     variant_count = {"single nucleotide variants": 0, 
                     "copy number gains": 0, 
-                    "copy number losses": 0
+                    "copy number losses": 0,
+                    "indels": 0,
+                    "deletions": 0,
+                    "insertions": 0
                     }
     infile = open("/Users/ninaxiong/projects/orientdb/clinvar/variant_summary.txt")
     for i in range(num_variants):
@@ -40,6 +43,21 @@ def add_clinvar_data(graph, Involves, num_variants=500):
             if add_copy_loss(batch, name, gene, build, chr):
                 count, disease_dict = add_statement(batch, name, clinical_significance, phenotypes, Involves, disease_dict)
                 variant_count["copy number losses"] += 1
+                statement_count += count
+        if type == "Indel":
+            if add_indel(batch, name, gene, build, chr, start, stop):
+                count, disease_dict = add_statement(batch, name, clinical_significance, phenotypes, Involves, disease_dict)
+                variant_count["indels"] += 1
+                statement_count += count
+        if type == "Deletion":
+            if add_deletion(batch, name, gene, build, chr, start, stop):
+                count, disease_dict = add_statement(batch, name, clinical_significance, phenotypes, Involves, disease_dict)
+                variant_count["deletions"] += 1
+                statement_count += count
+        if type == "Insertion":
+            if add_insertion(batch, name, gene, build, chr, start, stop):
+                count, disease_dict = add_statement(batch, name, clinical_significance, phenotypes, Involves, disease_dict)
+                variant_count["insertions"] += 1
                 statement_count += count
     infile.close()
     batch.commit()

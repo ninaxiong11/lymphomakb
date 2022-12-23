@@ -18,7 +18,7 @@ def initialize_graph_schema(graph):
         build = String()
         gene = String()
         transcript = String()
-        chromosome = Integer()
+        chromosome = String()
         genomic_pos = Integer()
         coding_pos = Integer()
         ref_nt = String()
@@ -33,7 +33,7 @@ def initialize_graph_schema(graph):
         build = String()
         gene = String()
         copies = Integer()
-        chromosome = Integer()
+        chromosome = String()
         genomic_start = Integer()
         genomic_end = Integer()
         cytogenetic_loc = String()
@@ -43,11 +43,49 @@ def initialize_graph_schema(graph):
         element_plural = "copylosses"
         build = String()
         gene = String()
-        chromosome = Integer()
+        chromosome = String()
         genomic_start = Integer()
         genomic_end = Integer()
         cytogenetic_loc = String()
 
+    class Indel(Variant):
+        element_type = "indel"
+        element_plural = "indels"
+        build = String()
+        gene = String()
+        transcript = String()
+        chromosome = String()
+        genomic_start = Integer()
+        genomic_end = Integer()
+        coding_start = String()
+        coding_end = String()
+        ins_nt = String()
+    
+    class Deletion(Variant):
+        element_type = "deletion"
+        element_plural = "deletions"
+        build = String()
+        gene = String()
+        transcript = String()
+        chromosome = String()
+        genomic_start = Integer()
+        genomic_end = Integer()
+        coding_start = String()
+        coding_end = String()
+
+    class Insertion(Variant):
+        element_type = "insertion"
+        element_plural = "insertions"
+        build = String()
+        gene = String()
+        transcript = String()
+        chromosome = String()
+        genomic_start = Integer()
+        genomic_end = Integer()
+        coding_start = String()
+        coding_end = String()
+        ins_nt = String()
+        
     class Statement(Node):
         element_type = "statement"
         element_plural = "statements"
@@ -84,4 +122,4 @@ def initialize_graph_schema(graph):
     graph.create_all(Node.registry)
     graph.create_all(Relationship.registry)
 
-    return Variant, SNV, CopyGain, CopyLoss, Statement, Disease, Drug, Involves, SubclassOf
+    return Involves, SubclassOf

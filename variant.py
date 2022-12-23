@@ -48,7 +48,7 @@ def add_snv(batch, name, gene, build, chr, genomic_pos):
         build = build,
         gene = gene,
         transcript = transcript,
-        chromosome = int(chr),
+        chromosome = chr,
         genomic_pos = int(genomic_pos),
         coding_pos = int(coding_pos),
         ref_nt = ref_nt,
@@ -78,7 +78,7 @@ def add_copy_gain(batch, name, gene, build, chr):
         build = build,
         gene = gene,
         copies = copies,
-        chromosome = int(chr),
+        chromosome = chr,
         genomic_start = int(genomic_start),
         genomic_end = int(genomic_end),
         cytogenetic_loc = cytogenetic_loc
@@ -96,16 +96,107 @@ def add_copy_loss(batch, name, gene, build, chr):
     if not match:
         return
     match = match.groups()
-    genomic_start = match.groups[1]
-    genomic_end = match.groups[2]
-    batch[clean_string(name)] = batch.copygains.create(
+    genomic_start = match[1]
+    genomic_end = match[2]
+    batch[clean_string(name)] = batch.copylosses.create(
         source = "clinvar",
         build = build,
         gene = gene,
-        chromosome = int(chr),
+        chromosome = chr,
         genomic_start = int(genomic_start),
         genomic_end = int(genomic_end),
         cytogenetic_loc = cytogenetic_loc
+    )
+    return True
+
+def add_indel(batch, name, gene, build, chr, start, stop):
+    match = re.match("(.+)\((.+)\)\:(.+)delins(.+)\(p.(.+)\)", name)
+    if match:
+        return
+    match = re.match("(.+)\((.+)\)\:(.+)delins(.+)", name)
+    if not match:
+        return
+    match = match.groups()
+    transcript = match[0]
+    coding_pos = match[2]
+    ins_nt = match[3]
+    match = re.match("c.(.+)_(.+)", coding_pos)
+    if not match:
+        return
+    match = match.groups()
+    coding_start = match[0]
+    coding_end = match[1]
+    batch[clean_string(name)] = batch.indels.create(
+        source = "clinvar",
+        build = build,
+        gene = gene,
+        transcript = transcript,
+        chromosome = chr,
+        genomic_start = int(start),
+        genomic_end = int(stop),
+        coding_start = coding_start,
+        coding_end = coding_end,
+        ins_nt = ins_nt
+    )
+    return True
+
+def add_deletion(batch, name, gene, build, chr, start, stop):
+    match = re.match("(.+)\((.+)\):(.+)del\s\(p.(.+)\)", name)
+    if not match:
+        return
+    match = match.groups()
+    transcript = match[0]
+    coding_change = match[2]
+    match = re.match("c.(.+)", coding_change)
+    if not match:
+        return
+    match = match.groups()
+    coding_start = match[0]
+    if "_" in coding_start:
+        match = re.match("c.(.+)_(.+)", coding_change)
+        match = match.groups()
+        coding_start = match[0]
+        coding_end = match[1]
+    else:
+        coding_end = "-"
+    batch[clean_string(name)] = batch.deletions.create(
+        source = "clinvar",
+        build = build,
+        gene = gene,
+        transcript = transcript,
+        chromosome = chr,
+        genomic_start = int(start),
+        genomic_end = int(stop),
+        coding_start = coding_start,
+        coding_end = coding_end
+    )
+    return True
+
+def add_insertion(batch, name, gene, build, chr, start, stop):
+    match = re.match("(.+)\((.+)\)\:(.+)ins(.+)\s\(p.(.+)\)", name)
+    if not match:
+        return
+    match = match.groups()
+    transcript = match[0]
+    coding_pos = match[2]
+    ins_nt = match[3]
+    match = re.match("c.(.+)_(.+)", coding_pos)
+    if not match:
+        return
+    match = match.groups()
+    coding_start = match[0]
+    coding_end = match[1]
+    batch[clean_string(name)] = batch.insertions.create(
+        source = "clinvar",
+        build = build,
+        gene = gene,
+        transcript = transcript,
+        chromosome = chr,
+        genomic_start = start,
+        genomic_end = stop,
+        coding_start = coding_start,
+        coding_end = coding_end,
+        ins_nt = ins_nt
     )
     return True
 

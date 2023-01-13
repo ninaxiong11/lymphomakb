@@ -11,7 +11,7 @@ def add_clinvar_data(graph, Involves, num_variants=500):
                     "deletions": 0,
                     "insertions": 0
                     }
-    infile = open("/Users/ninaxiong/projects/orientdb/clinvar/variant_summary.txt")
+    infile = open("/Users/ninaxiong/projects/orientdb/clinvar/variant_summary.txt") # change filepath
     for i in range(num_variants):
         line = infile.readline()
         line = line.strip().split("\t")

@@ -6,7 +6,7 @@
 4. To access the database, go to http://localhost:2480/ and login to `lymphomakb` database with username `root` and password `root`
 
 Currently incorporated sources:
-- NCIt
+- NCIt: https://evs.nci.nih.gov/ftp1/NCI_Thesaurus/Thesaurus.FLAT.zip
 - ClinVar: https://ftp.ncbi.nlm.nih.gov/pub/clinvar/tab_delimited/variant_summary.txt.gz
 
 Currently supported variant types:

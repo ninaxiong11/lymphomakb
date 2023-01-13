@@ -1,6 +1,9 @@
 # Lymphoma KB
 
-Once OrientDB is installed and running, run `graph.py` to initialize and populate graph knowledge base with variants and statements. 
+### Setting up knowledge base
+1. Install OrientDB and run from Docker Desktop
+3. Run `graph.py` to initialize and populate graph knowledge base with variants and statements
+4. To access the database, go to http://localhost:2480/ and login to `lymphomakb` database with username `root` and password `root`
 
 Currently incorporated sources:
 - NCIt
@@ -14,5 +17,7 @@ Currently supported variant types:
 - Deletion
 
 No. of diseases: 889
+
 No. of variants: 201
+
 No. of statements: 399

@@ -1,6 +1,6 @@
 from variant import *
 
-def add_clinvar_data(graph, Involves, num_variants=500):
+def add_clinvar_data(graph, Involves, filepath, num_variants=500):
     batch = graph.batch()
     disease_dict = {}
     statement_count = 0
@@ -11,7 +11,7 @@ def add_clinvar_data(graph, Involves, num_variants=500):
                     "deletions": 0,
                     "insertions": 0
                     }
-    infile = open("/Users/ninaxiong/projects/orientdb/clinvar/variant_summary.txt") # change filepath
+    infile = open(filepath) # /Users/ninaxiong/projects/orientdb/clinvar/variant_summary.txt
     for i in range(num_variants):
         line = infile.readline()
         line = line.strip().split("\t")

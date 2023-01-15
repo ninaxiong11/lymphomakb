@@ -10,9 +10,9 @@ def get_parent_name(records, parent_code):
     if parent:
         return parent[0]["name"]
 
-def add_disease_tree(graph, SubclassOf):
+def add_disease_tree(graph, SubclassOf, filepath):
     batch = graph.batch()
-    infile = open("/Users/ninaxiong/Downloads/Thesaurus.txt") # change filepath
+    infile = open(filepath) # /Users/ninaxiong/Downloads/Thesaurus.txt
     records = []
     for line in infile:
         if "lymphoma" not in line or "Lymphoma" not in line:
